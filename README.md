@@ -2,7 +2,12 @@ terminal
 ========
 
 PHP web terminal emullation
-see this [video in portuguese!][1]
+
+For more information see [this video][1] in Portuguese.
+
+
+
+Bill Rocha - prbr@ymail.com
 
 
 
