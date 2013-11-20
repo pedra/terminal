@@ -216,7 +216,7 @@ function view($name, $values = array()){
             *::-moz-placeholder {color:#357}
             *::-webkit-input-placeholder {color:#357}
             *:-ms-input-placeholder {color:#357}
-            body {background: #333; min-width: 450px;}
+            body {background: #333 url(http://4.bp.blogspot.com/-OpFqYklSD-k/UQcCXvRs9UI/AAAAAAAAQs8/uD3Mc7RhLl4/s1600/Chalkboard-background.jpg) fixed; background-size: cover; min-width: 450px;}
             h1 { font-size: 26px; color: #494}
             label { font-weight: normal; color:#999; }
             button { padding: 5px 20px; margin-top: 20px}
