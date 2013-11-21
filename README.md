@@ -14,7 +14,7 @@ Bill Rocha - prbr@ymail.com
 
 	version 0.0.2
 	Fixed bugs and rename screen display to "screen" ( old name "terminal") 
-	for compatibility with Sync Project.
+	for compatibility with Sync Project. 
 
 
 
