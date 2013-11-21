@@ -16,7 +16,7 @@ if(!file_exists('sync.db')) createDbUsers();
 session_start();
 
 if (!isset($_SERVER['REQUEST_SCHEME'])) $_SERVER['REQUEST_SCHEME'] = 'http';
-define('URL', $_SERVER['REQUEST_SCHEME'] . '://' . $_SERVER['SERVER_NAME'] . '/');
+define('URL', $_SERVER['REQUEST_SCHEME'] . '://' . $_SERVER['SERVER_NAME'] . '/sync_new/');
 
 //startup User 
 $user = new User((new DB)->getUsers());
@@ -25,18 +25,18 @@ $user->login();
 
 
 // ------------------------------------------> CONTROLLERS
-$terminal = '';
+$screen = '';
 $command = '';
 
   if(!$user->getVal('dir')) $user->setVal('dir', __DIR__);
 
-  //TERMINAL COMMANDS
+  //TERMINAL COMMANDS <------------------------------------
   if(isset($_GET['command'])) {
       
     //get linux prompt
     $sh = shell_exec("whoami");
     $host = explode(".", shell_exec("uname -n"));
-    $terminal = $user->getVal('terminal')."<span class=\"command\">".rtrim($sh).""."@"."".rtrim($host[0]).':';
+    $screen = $user->getVal('screen')."<span class=\"command\">".rtrim($sh).""."@"."".rtrim($host[0]).':';
     
     $command = trim($_GET['command']);
     
@@ -51,21 +51,21 @@ $command = '';
     array_pop($x);
     array_pop($x);
 
-    $terminal .= $user->getVal('dir').' # '.$command."</span>\n\n".htmlentities(implode("\n", $x))."\n\n";
+    $screen .= $user->getVal('dir').' # '.$command."</span>\n\n".htmlentities(implode("\n", $x))."\n\n";
 
     $user->setVal('command', $command);
-  } else $terminal .= $user->getVal('dir')." # \n";
+  } else $screen .= $user->getVal('dir')." # \n";
   
-  //USER COMMANDS
+  //USER COMMANDS <------------------------------------------
   if(isset($_GET['user'])){
-      if($_GET['user'] == 'list') $terminal .= "</span>\n\n".p((new DB)->getUsers())."\n\n";
-      if($_GET['user'] == 'clear') $terminal = '';
+      if($_GET['user'] == 'list') $screen .= "</span>\n\n".p((new DB)->getUsers())."\n\n";
+      if($_GET['user'] == 'clear') $screen = '';
   }
   //preserv terminal
-  $user->setVal('terminal', $terminal);
+  $user->setVal('screen', $screen);
   
   //load HTML -> terminal
-  view('terminal', array('terminal'=>$terminal, 'command'=>$command));
+  view('terminal', array('screen'=>$screen, 'command'=>$command));
   
   
 // ------------------------------------------> OBJECTS
@@ -216,7 +216,7 @@ function view($name, $values = array()){
             *::-moz-placeholder {color:#357}
             *::-webkit-input-placeholder {color:#357}
             *:-ms-input-placeholder {color:#357}
-            body {background: #333 url(http://4.bp.blogspot.com/-OpFqYklSD-k/UQcCXvRs9UI/AAAAAAAAQs8/uD3Mc7RhLl4/s1600/Chalkboard-background.jpg) fixed; background-size: cover; min-width: 450px;}
+            body {background: #333 url(bb.jpg) fixed; background-size: cover; min-width: 450px;}
             h1 { font-size: 26px; color: #494}
             label { font-weight: normal; color:#999; }
             button { padding: 5px 20px; margin-top: 20px}
@@ -236,9 +236,9 @@ function view($name, $values = array()){
             ul.submenu li:first-child a{border-top:1px solid #686; padding-top: 15px}
             ul.submenu li a:hover {background: #474; border-top:1px solid #686;}                       
             
-            .terminal { color: #4F9; padding:10px; margin: 25px 0 0 0; white-space: pre-wrap; font-size:11px;}
-            .terminal, .terminal * {font-family: 'Lucida Sans Typewriter', 'Lucida console', 'Courier New', Monospace, Tahoma, monospaced;}
-            .terminal span.command {color:#FF0}
+            .screen { color: #4F9; padding:10px; margin: 25px 0 0 0; white-space: pre-wrap; font-size:11px;}
+            .screen, .screen * {font-family: 'Lucida Sans Typewriter', 'Lucida console', 'Courier New', Monospace, Tahoma, monospaced;}
+            .screen span.command {color:#FF0}
             
             .login {position: absolute; left:50%; top:40%; margin:-100px 0 0 -124px; width: 200px; 
                     border: 1px solid #DDD; box-shadow: 0 6px 20px #000;
@@ -267,7 +267,7 @@ function view($name, $values = array()){
                 <input type="text" id="command" name="command" placeholder="type a command here..." value=""/>
             </form>
         </div>        
-        <div class="terminal" id="terminal"><?= $terminal ?></div>
+        <div class="screen" id="screen"><?= $screen ?></div>
     </body>
 </html>
 <?php }
