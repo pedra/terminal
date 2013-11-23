@@ -19,7 +19,7 @@ changes
 version **0.0.2**
 
 	Fixed bugs and rename screen display to "screen" ( old name "terminal") 
-	for compatibility with ~~Sync~~ Zumbi Project.
+	for compatibility with Zumbi Project.
 	
 version **0.0.3** *(see: [http://www.w3.org/TR/pointerevents][2])*
 
