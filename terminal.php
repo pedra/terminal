@@ -225,6 +225,7 @@ function view($name, $values = array()){
             .topbar #menu { float: left; padding: 8px 20px !important; border-right: 1px solid #579; cursor: pointer; z-index: 200}
             .topbar #menu:hover { background: #686;}
             .topbar #menu:hover ul.submenu{display:block}
+            .topbar #submenu.show {display:block}
             .topbar #command {float:left; min-width: 330px; padding: 8px; background: transparent; color:#FFF; 
                               border: none; border-left:1px solid #79B;}
             
@@ -249,13 +250,18 @@ function view($name, $values = array()){
             .login input {margin: 3px 0 10px 0; width: 185px; color:#000; font-weight: bold; font-size: 14px; border:1px solid #DDD; padding: 5px;}
             .login .msg {color:#F60; margin: 0 0 20px 0; font-style: italic}
         </style>
-        <script>window.onload = function(){setTimeout(function(){window.scrollTo(0, document.body.scrollHeight)},100)}</script>
+        <script>
+            window.onload = function(){setTimeout(function(){window.scrollTo(0, document.body.scrollHeight)},100)}
+            function toggleMenu() {
+                document.getElementById("submenu").classList.toggle("show");
+            }
+        </script>
     </head>
     <body>
 <?php if($name == 'terminal'){ ?>
         <div class="topbar">
-            <div id="menu">Menu
-                <ul class="submenu">
+            <div id="menu" onclick="toggleMenu();">Menu
+                <ul id="submenu" class="submenu">
                     <li><a href="<?php echo URL;?>terminal.php?command=ls -ls">List current directory</a></li>
                     <li><a href="<?php echo URL;?>terminal.php?command=cd /var/www">Goto '/var/www'</a></li>
                     <li><a href="<?php echo URL;?>terminal.php?user=list">List Users</a></li>
