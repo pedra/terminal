@@ -1,14 +1,4 @@
 <?php
-/* This script is based in http://sourceforge.net/projects/phpterm/
- * 
- * TODO
- * 1 - interface User Manager (create/delete/edit)
- * 2 - message board (social network - leave a message to other user.)
- * 3 - change commands: GET to POST
- * 
- * contact: Bill Rocha - prbr@ymail.com | Tel.: +55 21 98795 0673 (Rio de Janeiro, Brazil) 
- * Terminal version 0.1 - 2013/11/20-14:18:00
- */
 
 //initial database creator
 if(!file_exists('sync.db')) createDbUsers();
@@ -16,7 +6,7 @@ if(!file_exists('sync.db')) createDbUsers();
 session_start();
 
 if (!isset($_SERVER['REQUEST_SCHEME'])) $_SERVER['REQUEST_SCHEME'] = 'http';
-define('URL', $_SERVER['REQUEST_SCHEME'] . '://' . $_SERVER['SERVER_NAME'] . '/sync_new/');
+define('URL', $_SERVER['REQUEST_SCHEME'] . '://' . $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI']);
 
 //startup User 
 $user = new User((new DB)->getUsers());
@@ -28,17 +18,21 @@ $user->login();
 $screen = '';
 $command = '';
 
+
+
+
   if(!$user->getVal('dir')) $user->setVal('dir', __DIR__);
 
   //TERMINAL COMMANDS <------------------------------------
-  if(isset($_GET['command'])) {
+  if(isset($_POST['command'])) {
       
     //get linux prompt
     $sh = shell_exec("whoami");
     $host = explode(".", shell_exec("uname -n"));
     $screen = $user->getVal('screen')."<span class=\"command\">".rtrim($sh).""."@"."".rtrim($host[0]).':';
     
-    $command = trim($_GET['command']);
+    $command = decode($_POST['command']);
+
     
     if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') $temp = 'cd '.$user->getVal('dir').' &'.$command.' & cd';
     else $temp = 'cd '.$user->getVal('dir').' ;'.$command.' ; pwd'; 
@@ -185,6 +179,17 @@ class User {
 }
   
 // ------------------------------------------> FUNCTIONS
+function decode($str){
+	$ar = explode(' ', trim($str));
+	$out = '';
+	
+	foreach($ar as $v){
+		$out .= chr($v);
+	}
+	return $out;
+}
+
+
 function p($val, $x = false) {
     $o = '<pre>' . print_r($val, true) . '</pre>';
     return (!$x) ? $o : exit($o);
@@ -216,7 +221,7 @@ function view($name, $values = array()){
             *::-moz-placeholder {color:#357}
             *::-webkit-input-placeholder {color:#357}
             *:-ms-input-placeholder {color:#357}
-            body {background: #333 url(bb.jpg) fixed; background-size: cover; min-width: 450px;}
+            body {background: #333 fixed; background-size: cover; min-width: 450px;}
             h1 { font-size: 26px; color: #494}
             label { font-weight: normal; color:#999; }
             button { padding: 5px 20px; margin-top: 20px}
@@ -226,7 +231,7 @@ function view($name, $values = array()){
             .topbar #menu:hover { background: #686;}
             .topbar #menu:hover ul.submenu{display:block}
             .topbar #submenu.show {display:block}
-            .topbar #command {float:left; min-width: 330px; padding: 8px; background: transparent; color:#FFF; 
+            .topbar #command {float:left; width: 90%; padding: 8px; background: transparent; color:#FFF; 
                               border: none; border-left:1px solid #79B;}
             
             ul.submenu {display:none; position: fixed; left:0; top:27px; min-width: 200px; padding: 0 0 0 0; background: #686; color:#FFF; 
@@ -255,6 +260,23 @@ function view($name, $values = array()){
             function toggleMenu() {
                 document.getElementById("submenu").classList.toggle("show");
             }
+            
+			function encode(str) {
+				var out = '';
+				for (var i = 0; i < str.length; i++) {
+				out += " " + str[i].charCodeAt();
+				}
+				return out;
+			}
+
+			function decode(str) {
+				var out = '';
+				var arr = str.trim(' ').split(' ');
+				for (var i = 0; i < arr.length; i++) {
+				out += String.fromCharCode(arr[i]);
+				}
+				return out;
+			}
         </script>
     </head>
     <body>
@@ -262,14 +284,14 @@ function view($name, $values = array()){
         <div class="topbar">
             <div id="menu" onclick="toggleMenu();">Menu
                 <ul id="submenu" class="submenu">
-                    <li><a href="<?php echo URL;?>terminal.php?command=ls -ls">List current directory</a></li>
-                    <li><a href="<?php echo URL;?>terminal.php?command=cd /var/www">Goto '/var/www'</a></li>
-                    <li><a href="<?php echo URL;?>terminal.php?user=list">List Users</a></li>
-                    <li><a href="<?php echo URL;?>terminal.php?user=clear">Clear terminal</a></li>
-                    <li><a href="<?php echo URL;?>terminal.php?logout=true">Logout</a></li>
+                    <li><a href="<?php echo URL;?>?command=ls -ls">List current directory</a></li>
+                    <li><a href="<?php echo URL;?>?command=cd /var/www">Goto '/var/www'</a></li>
+                    <li><a href="<?php echo URL;?>?user=list">List Users</a></li>
+                    <li><a href="<?php echo URL;?>?user=clear">Clear terminal</a></li>
+                    <li><a href="<?php echo URL;?>?logout=true">Logout</a></li>
                 </ul>
             </div>		
-            <form method="get" action="<?php echo URL;?>terminal.php">
+            <form method="post" onsubmit="this.children[0].value = encode(this.children[0].value)" action="<?php echo URL;?>">
                 <input type="text" id="command" name="command" placeholder="type a command here..." value=""/>
             </form>
         </div>        
@@ -281,7 +303,7 @@ function view($name, $values = array()){
         if(!isset($msg)) $msg = '';
         ?>
         <div class="login">            
-            <form method="post" action="<?php echo URL;?>terminal.php">
+            <form method="post" action="<?php echo URL;?>">
                 <h1>Authentication</h1>
                 <span class="msg"><?=$msg?></span>	
                 <label>Login:</label>
